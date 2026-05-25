@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios'
-import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import DashboardShell from '../components/DashboardShell.vue'
@@ -35,7 +35,6 @@ const savingId = ref<string | null>(null)
 const deletingId = ref<string | null>(null)
 const statusMessage = ref('')
 const errorMessage = ref('')
-const composerRef = ref<HTMLInputElement | null>(null)
 const form = reactive({
   title: '',
   description: '',
@@ -215,11 +214,6 @@ async function handleDeleteTodo(todo: Todo) {
   }
 }
 
-async function focusComposer() {
-  await nextTick()
-  composerRef.value?.focus()
-}
-
 async function handleLogout() {
   authStore.clearSession()
   await router.push('/login')
@@ -311,12 +305,10 @@ onMounted(() => {
           </button>
         </div>
 
-        <button class="new-task-button" type="button" @click="focusComposer">＋ New Task</button>
       </div>
 
       <div class="composer-grid">
         <input
-          ref="composerRef"
           v-model="form.title"
           type="text"
           maxlength="200"
@@ -426,7 +418,6 @@ onMounted(() => {
         <strong>Changes sync with your MCP tools</strong>
         <p>Create, update, complete, and delete tasks here or from Codex. Everything stays in sync.</p>
       </div>
-      <router-link to="/mcp-settings">View MCP Settings</router-link>
     </section>
   </DashboardShell>
 </template>
@@ -543,7 +534,6 @@ onMounted(() => {
 }
 
 .pill,
-.new-task-button,
 .primary-button,
 .icon-button {
   border: 0;
@@ -559,12 +549,6 @@ onMounted(() => {
 }
 
 .pill.active {
-  color: #ffffff;
-  background: linear-gradient(135deg, #2f56ff 0%, #5b70ff 100%);
-}
-
-.new-task-button {
-  padding: 12px 16px;
   color: #ffffff;
   background: linear-gradient(135deg, #2f56ff 0%, #5b70ff 100%);
 }
@@ -793,12 +777,6 @@ onMounted(() => {
 .sync-card p {
   margin: 8px 0 0;
   color: #69758f;
-}
-
-.sync-card a {
-  color: #2f56ff;
-  font-weight: 600;
-  text-decoration: none;
 }
 
 @media (max-width: 1240px) {

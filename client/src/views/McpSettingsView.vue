@@ -202,7 +202,6 @@ onMounted(() => {
         <span>Your MCP Endpoint</span>
         <div>
           <code>{{ serverUrl }}</code>
-          <button type="button" @click="copyText(serverUrl, 'MCP 地址已复制。')">复制</button>
         </div>
       </div>
     </section>
@@ -342,8 +341,7 @@ onMounted(() => {
 .ghost-button,
 .primary-button,
 .danger-button,
-.secret-row button,
-.endpoint-block button {
+.secret-row button {
   border: 0;
   border-radius: 12px;
   cursor: pointer;
@@ -424,7 +422,6 @@ onMounted(() => {
   background: #fbfcff;
 }
 
-.endpoint-block button,
 .secret-row button,
 .ghost-button {
   padding: 12px 14px;
