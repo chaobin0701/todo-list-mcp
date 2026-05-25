@@ -48,9 +48,19 @@ npm run build
 echo "==> Switching current release"
 ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
 
-echo "==> Restarting PM2 app"
 cd "$CURRENT_LINK"
-pm2 startOrReload ecosystem.config.cjs --update-env
-pm2 save
+
+if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files | grep -q '^todo-list-mcp\.service'; then
+  echo "==> Restarting systemd service"
+  sudo systemctl restart todo-list-mcp
+  sudo systemctl status todo-list-mcp --no-pager --lines=20
+elif command -v pm2 >/dev/null 2>&1; then
+  echo "==> Restarting PM2 app"
+  pm2 startOrReload ecosystem.config.cjs --update-env
+  pm2 save
+else
+  echo "No supported process manager found. Please install systemd service or PM2."
+  exit 1
+fi
 
 echo "==> Deploy completed"

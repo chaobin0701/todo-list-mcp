@@ -113,6 +113,7 @@ npm run smoke:mcp
 - 远程部署脚本：`deploy/remote-deploy.sh`
 - PM2 配置：`ecosystem.config.cjs`
 - Nginx 示例配置：`deploy/nginx.todo-mcp-demo.conf.example`
+- systemd 服务模板：`deploy/todo-list-mcp.service.example`
 
 ### GitHub Secrets
 
@@ -132,13 +133,15 @@ npm run smoke:mcp
 - `DEPLOY_USER=deploy`
 - `DEPLOY_PATH=/opt/todo-list-mcp`
 
+如果你已经在 GitHub 中填好了这些 Secrets，工作流本身就可以直接使用，不需要再改 YAML。
+
 ### 服务器需要提前准备
 
 至少需要这些：
 
 1. 安装 `Node.js 20+`
-2. 安装 `pm2`
-3. 安装并配置 `nginx`
+2. 安装并启用 `systemd` 服务，推荐优先使用它管理后端
+3. 由 `1Panel/OpenResty` 或 `nginx` 负责对外代理
 4. 创建部署目录：
 
 ```bash
@@ -179,13 +182,34 @@ VITE_API_BASE_URL=https://your-domain.com
 VITE_MCP_SERVER_URL=https://your-domain.com/mcp
 ```
 
-7. 安装 PM2：
+7. 推荐创建 systemd 服务：
+
+将 `deploy/todo-list-mcp.service.example` 放到服务器：
+
+```bash
+sudo cp /opt/todo-list-mcp/current/deploy/todo-list-mcp.service.example /etc/systemd/system/todo-list-mcp.service
+sudo systemctl daemon-reload
+sudo systemctl enable todo-list-mcp
+```
+
+8. 如果仍想继续使用 PM2，也可以保留：
 
 ```bash
 npm install -g pm2
 ```
 
-首次部署完成后可执行：
+### 1Panel / OpenResty 说明
+
+如果 `80/443` 实际由 `1Panel/OpenResty` 接管，更推荐：
+
+- 在 `1Panel` 中新建站点
+- 前端根目录指向：`/opt/todo-list-mcp/current/client/dist`
+- 反向代理 `/api` 到：`http://127.0.0.1:3000`
+- 反向代理 `/mcp` 到：`http://127.0.0.1:3000/mcp`
+
+### 首次部署后如果使用 PM2
+
+可执行：
 
 ```bash
 pm2 startup
