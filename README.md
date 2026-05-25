@@ -105,6 +105,92 @@ npm run smoke:mcp
 - 调用 `complete_todo`
 - 调用 `delete_todo`
 
+## GitHub Actions 自动部署
+
+仓库已包含：
+
+- GitHub Actions 工作流：`.github/workflows/deploy.yml`
+- 远程部署脚本：`deploy/remote-deploy.sh`
+- PM2 配置：`ecosystem.config.cjs`
+- Nginx 示例配置：`deploy/nginx.todo-mcp-demo.conf.example`
+
+### GitHub Secrets
+
+需要在仓库 `Settings -> Secrets and variables -> Actions` 中配置：
+
+- `DEPLOY_HOST`
+- `DEPLOY_USER`
+- `DEPLOY_SSH_KEY`
+- `DEPLOY_KNOWN_HOSTS`
+- `DEPLOY_PATH`
+
+推荐：
+
+- `DEPLOY_HOST=120.26.45.112`
+- `DEPLOY_USER=deploy`
+- `DEPLOY_PATH=/var/www/todo-mcp-demo`
+
+### 服务器需要提前准备
+
+至少需要这些：
+
+1. 安装 `Node.js 20+`
+2. 安装 `pm2`
+3. 安装并配置 `nginx`
+4. 创建部署目录：
+
+```bash
+sudo mkdir -p /var/www/todo-mcp-demo/{releases,shared/server,shared/client}
+sudo chown -R deploy:deploy /var/www/todo-mcp-demo
+```
+
+5. 准备服务端环境变量文件：
+
+路径：
+
+```bash
+/var/www/todo-mcp-demo/shared/server/.env
+```
+
+建议内容示例：
+
+```env
+NODE_ENV=production
+PORT=3000
+CLIENT_ORIGIN=https://your-domain.com
+DATABASE_URL="file:/var/www/todo-mcp-demo/shared/server/prod.db"
+JWT_SECRET=replace-with-a-strong-secret
+JWT_EXPIRES_IN=7d
+```
+
+6. 准备前端环境变量文件：
+
+路径：
+
+```bash
+/var/www/todo-mcp-demo/shared/client/.env
+```
+
+建议内容示例：
+
+```env
+VITE_API_BASE_URL=https://your-domain.com
+VITE_MCP_SERVER_URL=https://your-domain.com/mcp
+```
+
+7. 安装 PM2：
+
+```bash
+npm install -g pm2
+```
+
+首次部署完成后可执行：
+
+```bash
+pm2 startup
+pm2 save
+```
+
 ## 发布前提醒
 
 - 不要提交 `client/.env` 和 `server/.env`

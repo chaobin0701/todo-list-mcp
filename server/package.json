@@ -9,6 +9,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/app.js",
     "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
     "smoke:mcp": "tsx src/scripts/smoke-mcp.ts"
   },
   "keywords": [],
