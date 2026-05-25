@@ -47,9 +47,9 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           echo "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
 
-      - name: Prepare release archive
+      - name: Prepare tracked release archive
         run: |
-          git ls-files -z | tar --null -T - -czf release.tgz
+          git archive --format=tar.gz --output=release.tgz HEAD
 
       - name: Upload release
         env:
