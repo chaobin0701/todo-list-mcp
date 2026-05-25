@@ -48,6 +48,11 @@ npm run build
 echo "==> Switching current release"
 ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
 
+if [ ! -f "$CURRENT_LINK/ecosystem.config.cjs" ]; then
+  echo "Missing PM2 config: $CURRENT_LINK/ecosystem.config.cjs"
+  exit 1
+fi
+
 cd "$CURRENT_LINK"
 
 if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files | grep -q '^todo-list-mcp\.service'; then
@@ -56,7 +61,7 @@ if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files | grep -q '
   sudo systemctl status todo-list-mcp --no-pager --lines=20
 elif command -v pm2 >/dev/null 2>&1; then
   echo "==> Restarting PM2 app"
-  pm2 startOrReload ecosystem.config.cjs --update-env
+  pm2 startOrReload "$CURRENT_LINK/ecosystem.config.cjs" --update-env
   pm2 save
 else
   echo "No supported process manager found. Please install systemd service or PM2."
