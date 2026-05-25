@@ -46,6 +46,11 @@ npm ci
 npm run build
 
 echo "==> Switching current release"
+if [ -d "$CURRENT_LINK" ] && [ ! -L "$CURRENT_LINK" ]; then
+  echo "==> Replacing existing current directory with symlink"
+  rm -rf "$CURRENT_LINK"
+fi
+
 ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
 
 if [ ! -f "$CURRENT_LINK/ecosystem.config.cjs" ]; then
