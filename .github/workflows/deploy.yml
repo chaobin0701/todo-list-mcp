@@ -49,16 +49,7 @@ jobs:
 
       - name: Prepare release archive
         run: |
-          tar \
-            --exclude='.git' \
-            --exclude='client/node_modules' \
-            --exclude='server/node_modules' \
-            --exclude='client/dist' \
-            --exclude='server/dist' \
-            --exclude='client/.env' \
-            --exclude='server/.env' \
-            --exclude='server/prisma/*.db' \
-            -czf release.tgz .
+          git ls-files -z | tar --null -T - -czf release.tgz
 
       - name: Upload release
         env:
