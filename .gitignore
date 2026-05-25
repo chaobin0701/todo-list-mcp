@@ -1,0 +1,32 @@
+.DS_Store
+
+# Root scripts / misc logs
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Node / build outputs
+node_modules/
+dist/
+coverage/
+
+# Client
+client/node_modules/
+client/dist/
+
+# Server
+server/node_modules/
+server/dist/
+
+# Prisma / SQLite local data
+server/prisma/*.db
+server/prisma/*.db-journal
+server/prisma/*.db-shm
+server/prisma/*.db-wal
+
+# Editor files
+.idea/
+.vscode/
