@@ -63,21 +63,23 @@ jobs:
       - name: Upload release
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           RELEASE_SHA: ${{ github.sha }}
         run: |
-          ssh -i ~/.ssh/id_ed25519 "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p '$DEPLOY_PATH/releases/$RELEASE_SHA'"
-          scp -i ~/.ssh/id_ed25519 release.tgz "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/releases/$RELEASE_SHA/release.tgz"
+          ssh -p "$DEPLOY_PORT" -i ~/.ssh/id_ed25519 "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p '$DEPLOY_PATH/releases/$RELEASE_SHA'"
+          scp -P "$DEPLOY_PORT" -i ~/.ssh/id_ed25519 release.tgz "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/releases/$RELEASE_SHA/release.tgz"
 
       - name: Deploy on server
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           RELEASE_SHA: ${{ github.sha }}
         run: |
-          ssh -i ~/.ssh/id_ed25519 "$DEPLOY_USER@$DEPLOY_HOST" "
+          ssh -p "$DEPLOY_PORT" -i ~/.ssh/id_ed25519 "$DEPLOY_USER@$DEPLOY_HOST" "
             set -e
             cd '$DEPLOY_PATH/releases/$RELEASE_SHA' &&
             tar -xzf release.tgz &&

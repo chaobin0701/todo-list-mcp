@@ -119,6 +119,7 @@ npm run smoke:mcp
 需要在仓库 `Settings -> Secrets and variables -> Actions` 中配置：
 
 - `DEPLOY_HOST`
+- `DEPLOY_PORT`
 - `DEPLOY_USER`
 - `DEPLOY_SSH_KEY`
 - `DEPLOY_KNOWN_HOSTS`
@@ -127,8 +128,9 @@ npm run smoke:mcp
 推荐：
 
 - `DEPLOY_HOST=120.26.45.112`
+- `DEPLOY_PORT=22`
 - `DEPLOY_USER=deploy`
-- `DEPLOY_PATH=/var/www/todo-mcp-demo`
+- `DEPLOY_PATH=/opt/todo-list-mcp`
 
 ### 服务器需要提前准备
 
@@ -140,8 +142,7 @@ npm run smoke:mcp
 4. 创建部署目录：
 
 ```bash
-sudo mkdir -p /var/www/todo-mcp-demo/{releases,shared/server,shared/client}
-sudo chown -R deploy:deploy /var/www/todo-mcp-demo
+bash deploy/server-prepare.sh deploy
 ```
 
 5. 准备服务端环境变量文件：
@@ -149,7 +150,7 @@ sudo chown -R deploy:deploy /var/www/todo-mcp-demo
 路径：
 
 ```bash
-/var/www/todo-mcp-demo/shared/server/.env
+/opt/todo-list-mcp/shared/server/.env
 ```
 
 建议内容示例：
@@ -158,7 +159,7 @@ sudo chown -R deploy:deploy /var/www/todo-mcp-demo
 NODE_ENV=production
 PORT=3000
 CLIENT_ORIGIN=https://your-domain.com
-DATABASE_URL="file:/var/www/todo-mcp-demo/shared/server/prod.db"
+DATABASE_URL="file:/opt/todo-list-mcp/shared/server/prod.db"
 JWT_SECRET=replace-with-a-strong-secret
 JWT_EXPIRES_IN=7d
 ```
@@ -168,7 +169,7 @@ JWT_EXPIRES_IN=7d
 路径：
 
 ```bash
-/var/www/todo-mcp-demo/shared/client/.env
+/opt/todo-list-mcp/shared/client/.env
 ```
 
 建议内容示例：
