@@ -53,18 +53,26 @@ fi
 
 ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
 
-if [ ! -f "$CURRENT_LINK/ecosystem.config.cjs" ]; then
-  echo "Missing PM2 config: $CURRENT_LINK/ecosystem.config.cjs"
-  exit 1
-fi
-
 cd "$CURRENT_LINK"
 
 if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files | grep -q '^todo-list-mcp\.service'; then
-  echo "==> Restarting systemd service"
+  echo "==> Restarting backend systemd service"
   sudo systemctl restart todo-list-mcp
   sudo systemctl status todo-list-mcp --no-pager --lines=20
+
+  if systemctl list-unit-files | grep -q '^todo-list-mcp-frontend\.service'; then
+    echo "==> Restarting frontend systemd service"
+    sudo systemctl restart todo-list-mcp-frontend
+    sudo systemctl status todo-list-mcp-frontend --no-pager --lines=20
+  else
+    echo "Warning: todo-list-mcp-frontend.service not found. Frontend was not restarted."
+  fi
 elif command -v pm2 >/dev/null 2>&1; then
+  if [ ! -f "$CURRENT_LINK/ecosystem.config.cjs" ]; then
+    echo "Missing PM2 config: $CURRENT_LINK/ecosystem.config.cjs"
+    exit 1
+  fi
+
   echo "==> Restarting PM2 app"
   pm2 startOrReload "$CURRENT_LINK/ecosystem.config.cjs" --update-env
   pm2 save

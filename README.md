@@ -114,6 +114,7 @@ npm run smoke:mcp
 - PM2 配置：`ecosystem.config.cjs`
 - Nginx 示例配置：`deploy/nginx.todo-mcp-demo.conf.example`
 - systemd 服务模板：`deploy/todo-list-mcp.service.example`
+- 前端 systemd 服务模板：`deploy/todo-list-mcp-frontend.service.example`
 
 ### GitHub Secrets
 
@@ -184,12 +185,37 @@ VITE_MCP_SERVER_URL=https://your-domain.com/mcp
 
 7. 推荐创建 systemd 服务：
 
-将 `deploy/todo-list-mcp.service.example` 放到服务器：
+将 `deploy/todo-list-mcp.service.example` 和 `deploy/todo-list-mcp-frontend.service.example` 放到服务器：
 
 ```bash
 sudo cp /opt/todo-list-mcp/current/deploy/todo-list-mcp.service.example /etc/systemd/system/todo-list-mcp.service
+sudo cp /opt/todo-list-mcp/current/deploy/todo-list-mcp-frontend.service.example /etc/systemd/system/todo-list-mcp-frontend.service
 sudo systemctl daemon-reload
 sudo systemctl enable todo-list-mcp
+sudo systemctl enable todo-list-mcp-frontend
+```
+
+### 直接用端口访问
+
+如果你暂时不接 `80/443`，可以直接访问：
+
+- 前端：`http://120.26.45.112:4173`
+- 后端 API：`http://120.26.45.112:3000`
+- MCP：`http://120.26.45.112:3000/mcp`
+
+这时建议环境变量写成：
+
+服务端：
+
+```env
+CLIENT_ORIGIN=http://120.26.45.112:4173
+```
+
+前端：
+
+```env
+VITE_API_BASE_URL=http://120.26.45.112:3000
+VITE_MCP_SERVER_URL=http://120.26.45.112:3000/mcp
 ```
 
 8. 如果仍想继续使用 PM2，也可以保留：
